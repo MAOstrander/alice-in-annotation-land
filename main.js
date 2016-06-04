@@ -1,16 +1,18 @@
 
 var outputSection = document.getElementById("output");
-var loadButtons = document.getElementById("loadButtons");
+var loadButtons = document.getElementById("load-buttons");
+var editControls = document.getElementById("edit-controls");
 
 var chapterRequest = new XMLHttpRequest();
 var annotationRequest = new XMLHttpRequest();
 
 
 function runAfterRequestLoads(dataEvent) {
-  //quick and ditry export to the DOM
+  //quick and dirty export to the DOM
   outputSection.innerHTML = dataEvent.target.responseText
 }
 function ifXMLRequestLoads(XMLdataEvent) {
+  editControls.className = "show"
   console.log("DATA", XMLdataEvent.target.responseText);
 }
 function errorIfRequestFails(errorData) {
@@ -19,6 +21,7 @@ function errorIfRequestFails(errorData) {
 function ifXMLRequestFails(errorXML) {
   alert("Sorry, something went wrong with the request", errorXML);
 }
+
 
 function loadParticularChapter(event){
   var loadWhich = event.target.id;
