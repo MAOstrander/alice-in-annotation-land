@@ -44,17 +44,24 @@ xmlToJson = function(xml) {
 
 
 function applyAllAnnotations(annotationArray){
-  console.log("Length of chapter", currentChapter.length);
-  console.log("annotationArray", annotationArray);
+  var outputChapter = currentChapter;
+
+  // Loop backwards through all the annotations applying them from the end to the begining
   for (var i = annotationArray.length - 1; i >= 0; i--) {
-    console.log(annotationArray[i].START);
+    var currentEnd = parseInt(annotationArray[i].END) + 1;
+    var currentStart = parseInt(annotationArray[i].START);
+    var currentCategory = annotationArray[i].category;
+
+    outputChapter = outputChapter.slice(0, currentEnd) + "</span>" + outputChapter.slice(currentEnd);
+    outputChapter = outputChapter.slice(0, currentStart) + `<span id='note-${i}' class='${currentCategory}'>` + outputChapter.slice(currentStart);
   }
+  outputSection.innerHTML = outputChapter;
 }
 
 function runAfterRequestLoads(dataEvent) {
   // Quick and dirty export to the DOM
   currentChapter = dataEvent.target.responseText;
-  outputSection.innerHTML = currentChapter
+  outputSection.innerHTML = currentChapter;
 
   // Pull the chapter from the response received, replacing the current url with an empty string.
   var whichChapter = dataEvent.target.responseURL.replace(window.location.href, '')

@@ -7,3 +7,19 @@
   top: 0;
   right: 0;
 }
+
+span {
+  font-weight: bolder;
+}
+
+.LOCATION {
+  background-color: blue;
+}
+
+.PERSON {
+  background-color: red;
+}
+
+.ORGANIZATION {
+  background-color: yellow;
+}
