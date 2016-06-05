@@ -43,6 +43,9 @@ xmlToJson = function(xml) {
 // End David Walsh's function
 
 
+function sayHey(){
+  console.log("Hey");
+}
 function applyAllAnnotations(annotationArray){
   var outputChapter = currentChapter;
 
@@ -93,6 +96,10 @@ function ifXMLRequestLoads(XMLdataEvent) {
   }
   // Build the initial annotations from converted object
   applyAllAnnotations(buildAnnotations);
+  var spans = document.getElementsByTagName('span');
+  for (var j = 0; j < spans.length; j++){
+    spans[j].addEventListener("click", sayHey)
+  }
 }
 
 function errorIfRequestFails(errorData) {

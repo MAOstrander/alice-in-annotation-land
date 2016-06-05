@@ -10,6 +10,7 @@
 
 span {
   font-weight: bolder;
+  position: relative;
 }
 
 .LOCATION {
@@ -22,4 +23,18 @@ span {
 
 .ORGANIZATION {
   background-color: yellow;
+}
+
+section#output {
+  line-height: 2.5;
+  margin: 20px 40px;
+}
+
+span:after {
+  content: attr(class);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: 70%;
+  z-index: 1;
 }
