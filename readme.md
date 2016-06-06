@@ -21,3 +21,15 @@ There are only 3 categories of annotations: 'PERSON', 'LOCATION', and 'ORGANIZAT
 - Amount of time taken to return the assignment.
 - Packaging and submission style.  You may submit this assignment via Git, JSfiddle, a tarball or zip, GitHub pages or any other means of submission you feel appropriate (though it is an evaluation criteria item).
 - If you're feeling ambitious, I have the other 12 chapters' worth of docs at your request.  Allowing the user to switch chapters is powerful but not required for this assignment.
+
+### To-Do
+--------------------------------------------
+1. Let user know if no annotations or no XML file found
+2. Can delete annotations
+3. Changes made to annotations are saved
+4. After saving changes or deleting annotations are redrawn
+5. Export existing annotations into a JSON format in the console
+6. Clicking the add annotation button will enter "add mode"
+7. Hide the edit fields and buttons unless actually editing
+8. Make sure the inputs for edit mode are valid, limit choices accordingly
+
