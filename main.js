@@ -3,7 +3,9 @@ var banner = document.getElementById("banner");
 var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
 var exportButton = document.getElementById("export");
+var saveEditButton = document.getElementById("edit-save");
 var editControls = document.getElementById("edit-controls");
+var editIndex = document.getElementsByName("index")[0];
 var editChars = document.getElementsByName("charseq")[0];
 var editCategory = document.getElementsByName("category")[0];
 var editStart = document.getElementsByName("START")[0];
@@ -14,8 +16,19 @@ var annotationRequest = new XMLHttpRequest();
 var currentChapter = '';
 var annotationArray = [];
 
+function saveAnnotation() {
+  console.log("You wanna save", annotationArray[editIndex.value]);
 
-function exportJSON(){
+  annotationArray[editIndex.value] = {
+    "category": editCategory.value,
+    "charseq": editChars.value,
+    "START": editStart.value,
+    "END": editEnd.value
+  }
+  applyAllAnnotations(annotationArray);
+}
+
+function exportJSON() {
   var exportAll = {
     "document": {
       "created": new Date()
@@ -30,6 +43,7 @@ function selectNote(annotationClicked){
   console.log("Clicked on: ", clickedWhich);
   console.log(annotationArray[clickedWhich]);
 
+  editIndex.value = clickedWhich;
   editChars.value = annotationArray[clickedWhich].charseq;
   editCategory.value = annotationArray[clickedWhich].category;
   editStart.value = annotationArray[clickedWhich].START;
@@ -149,6 +163,7 @@ function loadParticularChapter(clickEvent){
 
 // Event Handlers
 loadButtons.addEventListener("click", loadParticularChapter);
+saveEditButton.addEventListener("click", saveAnnotation);
 exportButton.addEventListener("click", exportJSON);
 chapterRequest.addEventListener("load", runAfterRequestLoads);
 chapterRequest.addEventListener("error", errorIfRequestFails);
