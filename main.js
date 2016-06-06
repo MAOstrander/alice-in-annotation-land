@@ -2,6 +2,7 @@
 var banner = document.getElementById("banner");
 var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
+var addButton = document.getElementById("add-new");
 var exportButton = document.getElementById("export");
 var saveEditButton = document.getElementById("edit-save");
 var deleteButton = document.getElementById("edit-delete");
@@ -17,6 +18,31 @@ var chapterRequest = new XMLHttpRequest();
 var annotationRequest = new XMLHttpRequest();
 var currentChapter = '';
 var annotationArray = [];
+
+function buildAddAnnotationArray(textChapter){
+  var addAnnotationArray = textChapter.split(' ');
+  var testOutput = '';
+  for (var k = 0; k < addAnnotationArray.length; k++) {
+    addAnnotationArray[k] = `<test id='add-${k}' class='add-only'>` + addAnnotationArray[k] + "</test>";
+  }
+
+  document.getElementById("add-output").innerHTML = addAnnotationArray.join(' ');
+
+  var tests = document.getElementsByTagName('test');
+  for (var k = 0; k < tests.length; k++){
+    tests[k].addEventListener("click", addAnnotation)
+  }
+  console.log(addAnnotationArray);
+}
+
+function enableAddMode(){
+  console.log("This will allow you to click on a word and add it as an annotation");
+
+}
+
+function addAnnotation(addClickEvent){
+  console.log(">>", addClickEvent.target);
+}
 
 function deleteAnnotation() {
   if (editIndex.value !== ""){
@@ -68,9 +94,10 @@ function applyAllAnnotations(allAnnotations){
 
   // Loop backwards through all the annotations applying them from the end to the begining
   for (var i = allAnnotations.length - 1; i >= 0; i--) {
-    var currentEnd = parseInt(allAnnotations[i].END) + 1;
-    var currentStart = parseInt(allAnnotations[i].START);
-    var currentCategory = allAnnotations[i].category;
+    var currentAnnotation = allAnnotations[i];
+    var currentEnd = parseInt(currentAnnotation.END) + 1;
+    var currentStart = parseInt(currentAnnotation.START);
+    var currentCategory = currentAnnotation.category;
 
     outputChapter = outputChapter.slice(0, currentEnd) + "</span>" + outputChapter.slice(currentEnd);
     outputChapter = outputChapter.slice(0, currentStart) + `<span id='${i}' class='${currentCategory}'>` + outputChapter.slice(currentStart);
@@ -158,6 +185,7 @@ function ifXMLRequestLoads(XMLdataEvent) {
     }
     // Build the initial annotations from converted object
     applyAllAnnotations(annotationArray);
+    buildAddAnnotationArray(currentChapter);
   } else {
     console.log("No annotations found");
   }
@@ -183,6 +211,7 @@ function loadParticularChapter(clickEvent){
 
 // Event Handlers
 loadButtons.addEventListener("click", loadParticularChapter);
+addButton.addEventListener("click", enableAddMode);
 saveEditButton.addEventListener("click", saveAnnotation);
 deleteButton.addEventListener("click", deleteAnnotation);
 exportButton.addEventListener("click", exportJSON);
