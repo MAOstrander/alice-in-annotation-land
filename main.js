@@ -6,6 +6,7 @@ var exportButton = document.getElementById("export");
 var saveEditButton = document.getElementById("edit-save");
 var deleteButton = document.getElementById("edit-delete");
 var editControls = document.getElementById("edit-controls");
+var editMode = document.getElementById("edit-mode");
 var editIndex = document.getElementsByName("index")[0];
 var editChars = document.getElementsByName("charseq")[0];
 var editCategory = document.getElementsByName("category")[0];
@@ -35,6 +36,7 @@ function saveAnnotation() {
     "START": editStart.value,
     "END": editEnd.value
   }
+  editMode.className = "hidden";
   applyAllAnnotations(annotationArray);
 }
 
@@ -49,7 +51,8 @@ function exportJSON() {
 }
 
 function selectNote(annotationClicked){
-  var clickedWhich = annotationClicked.target.id
+  editMode.className = "";
+  var clickedWhich = annotationClicked.target.id;
   console.log("Clicked on: ", clickedWhich);
   console.log(annotationArray[clickedWhich]);
 
@@ -58,7 +61,6 @@ function selectNote(annotationClicked){
   editCategory.value = annotationArray[clickedWhich].category;
   editStart.value = annotationArray[clickedWhich].START;
   editEnd.value = annotationArray[clickedWhich].END;
-
 }
 
 function applyAllAnnotations(allAnnotations){
@@ -118,40 +120,47 @@ xmlToJson = function(xml) {
 
 
 function runAfterRequestLoads(dataEvent) {
-  // Quick and dirty export to the DOM
-  currentChapter = dataEvent.target.responseText;
-  outputSection.innerHTML = currentChapter;
+  if (dataEvent.target.status === 200) {
+    // Quick and dirty export to the DOM
+    currentChapter = dataEvent.target.responseText;
+    outputSection.innerHTML = currentChapter;
 
-  // Pull the chapter from the response received, replacing the current url with an empty string.
-  var whichChapter = dataEvent.target.responseURL.replace(window.location.href, '')
+    // Pull the chapter from the response received, replacing the current url with an empty string.
+    var whichChapter = dataEvent.target.responseURL.replace(window.location.href, '')
 
-  annotationRequest.open("GET", `${whichChapter}.xml`);
-  annotationRequest.send();
+    annotationRequest.open("GET", `${whichChapter}.xml`);
+    annotationRequest.send();
+  } else {
+    alert("We're sorry, that chapter could not be found");
+  }
 }
 
 function ifXMLRequestLoads(XMLdataEvent) {
-  // Let the user know that there is info in the console and give controls to modify annotations
   editControls.className = "";
   banner.className = "top-spacer";
 
-  // Convert the XML to a javascript object
-  var beforeConversionXML = XMLdataEvent.target.responseXML;
-  var convertedXML = xmlToJson(beforeConversionXML);
-  var onlyAnnotations = convertedXML.document.span;
-  // console.log("convertedXML", convertedXML);
+  if (XMLdataEvent.target.status === 200) {
+    // Convert the XML to a javascript object
+    var beforeConversionXML = XMLdataEvent.target.responseXML;
+    var convertedXML = xmlToJson(beforeConversionXML);
+    var onlyAnnotations = convertedXML.document.span;
+    // console.log("convertedXML", convertedXML);
 
-  // Convert the new XML object into a more usable array
-  for (var i = 0; i < onlyAnnotations.length; i++){
-    annotationArray[i] = {
-      "category": onlyAnnotations[i]["@attributes"].category,
-      "charseq": onlyAnnotations[i].extent.charseq["#text"],
-      "START": onlyAnnotations[i].extent.charseq["@attributes"].START,
-      "END": onlyAnnotations[i].extent.charseq["@attributes"].END
+    // Convert the new XML object into a more usable array
+    for (var i = 0; i < onlyAnnotations.length; i++){
+      annotationArray[i] = {
+        "category": onlyAnnotations[i]["@attributes"].category,
+        "charseq": onlyAnnotations[i].extent.charseq["#text"],
+        "START": onlyAnnotations[i].extent.charseq["@attributes"].START,
+        "END": onlyAnnotations[i].extent.charseq["@attributes"].END
+      }
+      // console.log(annotationArray[i]);
     }
-    // console.log(annotationArray[i]);
+    // Build the initial annotations from converted object
+    applyAllAnnotations(annotationArray);
+  } else {
+    console.log("No annotations found");
   }
-  // Build the initial annotations from converted object
-  applyAllAnnotations(annotationArray);
 }
 
 function errorIfRequestFails(errorData) {
