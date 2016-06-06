@@ -2,10 +2,22 @@
   display: none;
 }
 
-.show {
-  position: absolute;
+nav#edit-controls{
+  position: fixed;
+  background-color: white;
+  width: 100%;
+  z-index: 10;
   top: 0;
-  right: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid black;
+}
+
+nav h3 {
+  display: inline-block;
+}
+
+.top-spacer {
+  margin-top: 120px;
 }
 
 span {

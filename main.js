@@ -1,14 +1,48 @@
 
+var banner = document.getElementById("banner");
 var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
 var editControls = document.getElementById("edit-controls");
+var editChars = document.getElementsByName("charseq")[0];
+var editCategory = document.getElementsByName("category")[0];
+var editStart = document.getElementsByName("START")[0];
+var editEnd = document.getElementsByName("END")[0];
 
 var chapterRequest = new XMLHttpRequest();
 var annotationRequest = new XMLHttpRequest();
 var currentChapter = '';
+var annotationArray = [];
 
-// https://davidwalsh.name/convert-xml-json
+
+function selectNote(annotationClicked){
+  var clickedWhich = annotationClicked.target.id
+  console.log("Clicked on: ", clickedWhich);
+  console.log(annotationArray[clickedWhich]);
+
+  editChars.value = annotationArray[clickedWhich].charseq;
+  editCategory.value = annotationArray[clickedWhich].category;
+  editStart.value = annotationArray[clickedWhich].START;
+  editEnd.value = annotationArray[clickedWhich].END;
+
+}
+
+function applyAllAnnotations(allAnnotations){
+  var outputChapter = currentChapter;
+
+  // Loop backwards through all the annotations applying them from the end to the begining
+  for (var i = allAnnotations.length - 1; i >= 0; i--) {
+    var currentEnd = parseInt(allAnnotations[i].END) + 1;
+    var currentStart = parseInt(allAnnotations[i].START);
+    var currentCategory = allAnnotations[i].category;
+
+    outputChapter = outputChapter.slice(0, currentEnd) + "</span>" + outputChapter.slice(currentEnd);
+    outputChapter = outputChapter.slice(0, currentStart) + `<span id='${i}' class='${currentCategory}'>` + outputChapter.slice(currentStart);
+  }
+  outputSection.innerHTML = outputChapter;
+}
+
 // Borrowed function to convert xml to json from David Walsh
+// https://davidwalsh.name/convert-xml-json
 xmlToJson = function(xml) {
     var obj = {};
     if (xml.nodeType == 1) {
@@ -43,24 +77,6 @@ xmlToJson = function(xml) {
 // End David Walsh's function
 
 
-function sayHey(){
-  console.log("Hey");
-}
-function applyAllAnnotations(annotationArray){
-  var outputChapter = currentChapter;
-
-  // Loop backwards through all the annotations applying them from the end to the begining
-  for (var i = annotationArray.length - 1; i >= 0; i--) {
-    var currentEnd = parseInt(annotationArray[i].END) + 1;
-    var currentStart = parseInt(annotationArray[i].START);
-    var currentCategory = annotationArray[i].category;
-
-    outputChapter = outputChapter.slice(0, currentEnd) + "</span>" + outputChapter.slice(currentEnd);
-    outputChapter = outputChapter.slice(0, currentStart) + `<span id='note-${i}' class='${currentCategory}'>` + outputChapter.slice(currentStart);
-  }
-  outputSection.innerHTML = outputChapter;
-}
-
 function runAfterRequestLoads(dataEvent) {
   // Quick and dirty export to the DOM
   currentChapter = dataEvent.target.responseText;
@@ -75,7 +91,8 @@ function runAfterRequestLoads(dataEvent) {
 
 function ifXMLRequestLoads(XMLdataEvent) {
   // Let the user know that there is info in the console and give controls to modify annotations
-  editControls.className = "show";
+  editControls.className = "";
+  banner.className = "top-spacer";
 
   // Convert the XML to a javascript object
   var beforeConversionXML = XMLdataEvent.target.responseXML;
@@ -84,21 +101,20 @@ function ifXMLRequestLoads(XMLdataEvent) {
   // console.log("convertedXML", convertedXML);
 
   // Convert the new XML object into a more usable array
-  var buildAnnotations = [];
   for (var i = 0; i < onlyAnnotations.length; i++){
-    buildAnnotations[i] = {
+    annotationArray[i] = {
       "category": onlyAnnotations[i]["@attributes"].category,
       "charseq": onlyAnnotations[i].extent.charseq["#text"],
       "START": onlyAnnotations[i].extent.charseq["@attributes"].START,
       "END": onlyAnnotations[i].extent.charseq["@attributes"].END
     }
-    // console.log(buildAnnotations[i]);
+    // console.log(annotationArray[i]);
   }
   // Build the initial annotations from converted object
-  applyAllAnnotations(buildAnnotations);
+  applyAllAnnotations(annotationArray);
   var spans = document.getElementsByTagName('span');
   for (var j = 0; j < spans.length; j++){
-    spans[j].addEventListener("click", sayHey)
+    spans[j].addEventListener("click", selectNote)
   }
 }
 
