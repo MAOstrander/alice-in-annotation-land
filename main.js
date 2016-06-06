@@ -4,6 +4,7 @@ var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
 var exportButton = document.getElementById("export");
 var saveEditButton = document.getElementById("edit-save");
+var deleteButton = document.getElementById("edit-delete");
 var editControls = document.getElementById("edit-controls");
 var editIndex = document.getElementsByName("index")[0];
 var editChars = document.getElementsByName("charseq")[0];
@@ -16,9 +17,18 @@ var annotationRequest = new XMLHttpRequest();
 var currentChapter = '';
 var annotationArray = [];
 
-function saveAnnotation() {
-  console.log("You wanna save", annotationArray[editIndex.value]);
+function deleteAnnotation() {
+  if (editIndex.value !== ""){
+    annotationArray.splice(editIndex.value, 1);
+  }
+  editIndex.value = "";
+  editChars.value = "";
+  editStart.value = "";
+  editEnd.value = "";
+  applyAllAnnotations(annotationArray);
+}
 
+function saveAnnotation() {
   annotationArray[editIndex.value] = {
     "category": editCategory.value,
     "charseq": editChars.value,
@@ -64,6 +74,11 @@ function applyAllAnnotations(allAnnotations){
     outputChapter = outputChapter.slice(0, currentStart) + `<span id='${i}' class='${currentCategory}'>` + outputChapter.slice(currentStart);
   }
   outputSection.innerHTML = outputChapter;
+
+  var spans = document.getElementsByTagName('span');
+  for (var j = 0; j < spans.length; j++){
+    spans[j].addEventListener("click", selectNote)
+  }
 }
 
 // Borrowed function to convert xml to json from David Walsh
@@ -137,10 +152,6 @@ function ifXMLRequestLoads(XMLdataEvent) {
   }
   // Build the initial annotations from converted object
   applyAllAnnotations(annotationArray);
-  var spans = document.getElementsByTagName('span');
-  for (var j = 0; j < spans.length; j++){
-    spans[j].addEventListener("click", selectNote)
-  }
 }
 
 function errorIfRequestFails(errorData) {
@@ -164,6 +175,7 @@ function loadParticularChapter(clickEvent){
 // Event Handlers
 loadButtons.addEventListener("click", loadParticularChapter);
 saveEditButton.addEventListener("click", saveAnnotation);
+deleteButton.addEventListener("click", deleteAnnotation);
 exportButton.addEventListener("click", exportJSON);
 chapterRequest.addEventListener("load", runAfterRequestLoads);
 chapterRequest.addEventListener("error", errorIfRequestFails);
