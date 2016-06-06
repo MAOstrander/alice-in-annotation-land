@@ -2,6 +2,7 @@
 var banner = document.getElementById("banner");
 var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
+var exportButton = document.getElementById("export");
 var editControls = document.getElementById("edit-controls");
 var editChars = document.getElementsByName("charseq")[0];
 var editCategory = document.getElementsByName("category")[0];
@@ -13,6 +14,16 @@ var annotationRequest = new XMLHttpRequest();
 var currentChapter = '';
 var annotationArray = [];
 
+
+function exportJSON(){
+  var exportAll = {
+    "document": {
+      "created": new Date()
+    },
+    "annotations": annotationArray
+  }
+  console.log(exportAll);
+}
 
 function selectNote(annotationClicked){
   var clickedWhich = annotationClicked.target.id
@@ -138,6 +149,7 @@ function loadParticularChapter(clickEvent){
 
 // Event Handlers
 loadButtons.addEventListener("click", loadParticularChapter);
+exportButton.addEventListener("click", exportJSON);
 chapterRequest.addEventListener("load", runAfterRequestLoads);
 chapterRequest.addEventListener("error", errorIfRequestFails);
 annotationRequest.addEventListener("load", ifXMLRequestLoads);
