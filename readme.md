@@ -24,12 +24,9 @@ There are only 3 categories of annotations: 'PERSON', 'LOCATION', and 'ORGANIZAT
 
 ### To-Do
 --------------------------------------------
-1. Let user know if no annotations or no XML file found
-2. Can delete annotations
-3. Changes made to annotations are saved
-4. After saving changes or deleting annotations are redrawn
-5. Export existing annotations into a JSON format in the console
-6. Clicking the add annotation button will enter "add mode"
-7. Hide the edit fields and buttons unless actually editing
-8. Make sure the inputs for edit mode are valid, limit choices accordingly
+1. Clicking the add annotation button will enter "add mode"
+2. Organize code and functions logically
+3. Explain choices and steps in comments
+4. Recheck everything
+5. Request the other chapters
 

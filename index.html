@@ -9,15 +9,20 @@
 <body>
   <nav id="edit-controls" class="hidden">
     <h3>Edit Controls (Click an annotation to edit)</h3>
-    <button>Add annotation</button>
-    <button>Save document to JSON</button>
-    <div id="edit-mode">
-      <input type="text" name="charseq" value="">
-      <input type="text" name="category" value="">
-      <input type="text" name="START" value="">
-      <input type="text" name="END" value="">
-      <button>Save Changes</button>
-      <button>Delete Annotation</button>
+    <button id="add-new">Add annotation</button>
+    <button id="export">Save document to JSON</button>
+    <div id="edit-mode" class="hidden">
+      <input class="hidden" type="text" name="index" value="" readonly>
+      <input type="text" name="charseq" value="" readonly>
+      <select name="category">
+        <option value="PERSON">PERSON</option>
+        <option value="LOCATION">LOCATION</option>
+        <option value="ORGANIZATION">ORGANIZATION</option>
+      </select>
+      <input type="number" name="START" min="0" value="">
+      <input type="number" name="END" min="0" value="">
+      <button id="edit-save">Save Changes</button>
+      <button id="edit-delete">Delete Annotation</button>
     </div>
   </nav>
 
@@ -33,6 +38,8 @@
 
   </section>
 
+  <section id="add-output">
+  </section>
 
   <script type="text/javascript" src="main.js"></script>
 </body>
