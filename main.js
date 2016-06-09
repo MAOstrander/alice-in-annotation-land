@@ -32,7 +32,6 @@ function buildAddAnnotationArray(textChapter){
   for (var k = 0; k < tests.length; k++){
     tests[k].addEventListener("click", addAnnotation)
   }
-  console.log(addAnnotationArray);
 }
 
 function enableAddMode(){
@@ -41,7 +40,30 @@ function enableAddMode(){
 }
 
 function addAnnotation(addClickEvent){
-  console.log(">>", addClickEvent.target);
+  var workingChapter = currentChapter;
+  var testAnnotationArray = workingChapter.split(' ');
+
+  var wordIndex = addClickEvent.target.id.split('-')[1];
+  var targetWord = testAnnotationArray[wordIndex];
+
+  var everythingBeforeTarget = testAnnotationArray.splice(0, wordIndex).join(" ");
+
+  var targetStart = everythingBeforeTarget.length;
+  var targetEnd = targetStart + targetWord.length;
+  targetStart += 1; //account for the split/join index shift
+
+  annotationArray[annotationArray.length] = {
+    "category": "PERSON",
+    "charseq": targetWord,
+    "START": targetStart,
+    "END": targetEnd
+  }
+
+  annotationArray.sort(function(a, b) {
+    return a.END - b.END;
+  });
+
+  applyAllAnnotations(annotationArray);
 }
 
 function deleteAnnotation() {
@@ -52,6 +74,7 @@ function deleteAnnotation() {
   editChars.value = "";
   editStart.value = "";
   editEnd.value = "";
+  editMode.className = "hidden";
   applyAllAnnotations(annotationArray);
 }
 
