@@ -1,5 +1,6 @@
 
 var banner = document.getElementById("banner");
+var addOutputSection = document.getElementById("add-output");
 var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
 var addButton = document.getElementById("add-new");
@@ -26,7 +27,7 @@ function buildAddAnnotationArray(textChapter){
     addAnnotationArray[k] = `<test id='add-${k}' class='add-only'>` + addAnnotationArray[k] + "</test>";
   }
 
-  document.getElementById("add-output").innerHTML = addAnnotationArray.join(' ');
+  addOutputSection.innerHTML = addAnnotationArray.join(' ');
 
   var tests = document.getElementsByTagName('test');
   for (var k = 0; k < tests.length; k++){
@@ -36,6 +37,8 @@ function buildAddAnnotationArray(textChapter){
 
 function enableAddMode(){
   console.log("This will allow you to click on a word and add it as an annotation");
+  addOutputSection.className = "";
+  outputSection.className = "hidden";
 
 }
 
@@ -64,6 +67,22 @@ function addAnnotation(addClickEvent){
   });
 
   applyAllAnnotations(annotationArray);
+  addOutputSection.className = "hidden";
+  outputSection.className = "";
+
+  // Upon adding immedietely enter 'Edit Mode'
+  editMode.className = "";
+
+  var newIndex = annotationArray.findIndex(function(thisAnnotation) {
+    return thisAnnotation.END === targetEnd;
+  })
+
+
+  editIndex.value = newIndex;
+  editChars.value = targetWord;
+  editCategory.value = "PERSON";
+  editStart.value = targetStart;
+  editEnd.value = targetEnd;
 }
 
 function deleteAnnotation() {
