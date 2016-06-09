@@ -13,13 +13,17 @@
     <button id="export">Save document to JSON</button>
     <div id="edit-mode" class="hidden">
       <input class="hidden" type="text" name="index" value="" readonly>
+      <label for="charseq">Selected Text</label>
       <input type="text" name="charseq" value="" readonly>
+      <label for="category">Category</label>
       <select name="category">
         <option value="PERSON">PERSON</option>
         <option value="LOCATION">LOCATION</option>
         <option value="ORGANIZATION">ORGANIZATION</option>
       </select>
+      <label for="START">Start character</label>
       <input type="number" name="START" min="0" value="">
+      <label for="START">End character</label>
       <input type="number" name="END" min="0" value="">
       <button id="edit-save">Save Changes</button>
       <button id="edit-delete">Delete Annotation</button>
@@ -38,8 +42,21 @@
 
   </section>
 
-  <section id="add-output">
+  <section id="add-output" class="hidden">
   </section>
+
+
+  <div id="edit-help" class="hidden">
+    <h4>You are in Edit Mode</h4>
+    <p>You can change the start and end values of the annotation string, as well as the category.</p>
+  </div>
+
+  <div id="add-help" class="hidden">
+    <h4>You are in Add Mode</h4>
+    <p>Click on a word to add it as an annotation.</p>
+    <p>It will default to the PERSON category, but you can then edit it with the prompts at the top of screen.</p>
+  </div>
+
 
   <script type="text/javascript" src="main.js"></script>
 </body>

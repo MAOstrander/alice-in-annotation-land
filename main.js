@@ -1,5 +1,6 @@
 
 var banner = document.getElementById("banner");
+var addOutputSection = document.getElementById("add-output");
 var outputSection = document.getElementById("output");
 var loadButtons = document.getElementById("load-buttons");
 var addButton = document.getElementById("add-new");
@@ -8,6 +9,8 @@ var saveEditButton = document.getElementById("edit-save");
 var deleteButton = document.getElementById("edit-delete");
 var editControls = document.getElementById("edit-controls");
 var editMode = document.getElementById("edit-mode");
+var editHelp = document.getElementById("edit-help");
+var addHelp = document.getElementById("add-help");
 var editIndex = document.getElementsByName("index")[0];
 var editChars = document.getElementsByName("charseq")[0];
 var editCategory = document.getElementsByName("category")[0];
@@ -26,22 +29,65 @@ function buildAddAnnotationArray(textChapter){
     addAnnotationArray[k] = `<test id='add-${k}' class='add-only'>` + addAnnotationArray[k] + "</test>";
   }
 
-  document.getElementById("add-output").innerHTML = addAnnotationArray.join(' ');
+  addOutputSection.innerHTML = addAnnotationArray.join(' ');
 
   var tests = document.getElementsByTagName('test');
   for (var k = 0; k < tests.length; k++){
     tests[k].addEventListener("click", addAnnotation)
   }
-  console.log(addAnnotationArray);
 }
 
 function enableAddMode(){
   console.log("This will allow you to click on a word and add it as an annotation");
+  addHelp.className = "";
+  addOutputSection.className = "";
+  outputSection.className = "hidden";
 
 }
 
 function addAnnotation(addClickEvent){
-  console.log(">>", addClickEvent.target);
+  var workingChapter = currentChapter;
+  var testAnnotationArray = workingChapter.split(' ');
+
+  var wordIndex = addClickEvent.target.id.split('-')[1];
+  var targetWord = testAnnotationArray[wordIndex];
+
+  var everythingBeforeTarget = testAnnotationArray.splice(0, wordIndex).join(" ");
+
+  var targetStart = everythingBeforeTarget.length;
+  var targetEnd = targetStart + targetWord.length;
+  targetStart += 1; //account for the split/join index shift
+
+  annotationArray[annotationArray.length] = {
+    "category": "PERSON",
+    "charseq": targetWord,
+    "START": targetStart,
+    "END": targetEnd
+  }
+
+  annotationArray.sort(function(a, b) {
+    return a.END - b.END;
+  });
+
+  applyAllAnnotations(annotationArray);
+  addHelp.className = "hidden";
+  addOutputSection.className = "hidden";
+  outputSection.className = "";
+
+  // Upon adding immedietely enter 'Edit Mode'
+  editMode.className = "";
+  editHelp.className = "";
+
+  var newIndex = annotationArray.findIndex(function(thisAnnotation) {
+    return thisAnnotation.END === targetEnd;
+  })
+
+
+  editIndex.value = newIndex;
+  editChars.value = targetWord;
+  editCategory.value = "PERSON";
+  editStart.value = targetStart;
+  editEnd.value = targetEnd;
 }
 
 function deleteAnnotation() {
@@ -52,6 +98,9 @@ function deleteAnnotation() {
   editChars.value = "";
   editStart.value = "";
   editEnd.value = "";
+  editMode.className = "hidden";
+  editHelp.className = "hidden";
+
   applyAllAnnotations(annotationArray);
 }
 
@@ -63,6 +112,7 @@ function saveAnnotation() {
     "END": editEnd.value
   }
   editMode.className = "hidden";
+  editHelp.className = "hidden";
   applyAllAnnotations(annotationArray);
 }
 
@@ -78,6 +128,7 @@ function exportJSON() {
 
 function selectNote(annotationClicked){
   editMode.className = "";
+  editHelp.className = "";
   var clickedWhich = annotationClicked.target.id;
   console.log("Clicked on: ", clickedWhich);
   console.log(annotationArray[clickedWhich]);
