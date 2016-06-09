@@ -9,6 +9,8 @@ var saveEditButton = document.getElementById("edit-save");
 var deleteButton = document.getElementById("edit-delete");
 var editControls = document.getElementById("edit-controls");
 var editMode = document.getElementById("edit-mode");
+var editHelp = document.getElementById("edit-help");
+var addHelp = document.getElementById("add-help");
 var editIndex = document.getElementsByName("index")[0];
 var editChars = document.getElementsByName("charseq")[0];
 var editCategory = document.getElementsByName("category")[0];
@@ -37,6 +39,7 @@ function buildAddAnnotationArray(textChapter){
 
 function enableAddMode(){
   console.log("This will allow you to click on a word and add it as an annotation");
+  addHelp.className = "";
   addOutputSection.className = "";
   outputSection.className = "hidden";
 
@@ -67,11 +70,13 @@ function addAnnotation(addClickEvent){
   });
 
   applyAllAnnotations(annotationArray);
+  addHelp.className = "hidden";
   addOutputSection.className = "hidden";
   outputSection.className = "";
 
   // Upon adding immedietely enter 'Edit Mode'
   editMode.className = "";
+  editHelp.className = "";
 
   var newIndex = annotationArray.findIndex(function(thisAnnotation) {
     return thisAnnotation.END === targetEnd;
@@ -94,6 +99,8 @@ function deleteAnnotation() {
   editStart.value = "";
   editEnd.value = "";
   editMode.className = "hidden";
+  editHelp.className = "hidden";
+
   applyAllAnnotations(annotationArray);
 }
 
@@ -105,6 +112,7 @@ function saveAnnotation() {
     "END": editEnd.value
   }
   editMode.className = "hidden";
+  editHelp.className = "hidden";
   applyAllAnnotations(annotationArray);
 }
 
@@ -120,6 +128,7 @@ function exportJSON() {
 
 function selectNote(annotationClicked){
   editMode.className = "";
+  editHelp.className = "";
   var clickedWhich = annotationClicked.target.id;
   console.log("Clicked on: ", clickedWhich);
   console.log(annotationArray[clickedWhich]);
